@@ -1,0 +1,144 @@
+const pool = require('../config/db');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+
+// ==============================
+// REGISTRAR USUARIO
+// ==============================
+
+const registrarUsuario = async (req, res) => {
+
+    try {
+
+        const {
+            nombre,
+            apellido,
+            correo,
+            password,
+            rol
+        } = req.body;
+
+        const [existe] = await pool.query(
+            'SELECT * FROM usuarios WHERE correo = ?',
+            [correo]
+        );
+
+        if (existe.length > 0) {
+            return res.status(400).json({
+                mensaje: 'El correo ya está registrado'
+            });
+        }
+
+        const passwordHash = await bcrypt.hash(password, 10);
+
+        await pool.query(
+            `INSERT INTO usuarios
+            (nombre, apellido, correo, password, rol)
+            VALUES (?,?,?,?,?)`,
+            [
+                nombre,
+                apellido,
+                correo,
+                passwordHash,
+                rol
+            ]
+        );
+
+        res.status(201).json({
+            mensaje: 'Usuario registrado correctamente'
+        });
+
+    } catch (error) {
+
+        console.log(error);
+
+        res.status(500).json({
+            mensaje: 'Error del servidor'
+        });
+
+    }
+
+};
+
+// ==============================
+// LOGIN
+// ==============================
+
+const loginUsuario = async (req, res) => {
+
+    try {
+
+        const { correo, password } = req.body;
+
+        const [usuarios] = await pool.query(
+            'SELECT * FROM usuarios WHERE correo = ?',
+            [correo]
+        );
+
+        if (usuarios.length === 0) {
+
+            return res.status(404).json({
+                mensaje: 'Usuario no encontrado'
+            });
+
+        }
+
+        const usuario = usuarios[0];
+
+        const coincide = await bcrypt.compare(
+            password,
+            usuario.password
+        );
+
+        if (!coincide) {
+
+            return res.status(401).json({
+                mensaje: 'Contraseña incorrecta'
+            });
+
+        }
+
+        const token = jwt.sign(
+
+            {
+                id: usuario.id_usuario,
+                correo: usuario.correo,
+                rol: usuario.rol
+            },
+
+            'veriprod2026',
+
+            {
+                expiresIn: '8h'
+            }
+
+        );
+
+        res.json({
+
+            mensaje: 'Login correcto',
+            token,
+            usuario
+
+        });
+
+    } catch (error) {
+
+        console.log(error);
+
+        res.status(500).json({
+            mensaje: 'Error del servidor'
+        });
+
+    }
+
+};
+
+// ==============================
+
+module.exports = {
+
+    registrarUsuario,
+    loginUsuario
+
+};

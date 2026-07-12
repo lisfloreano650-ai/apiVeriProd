@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-
+const productosRoutes = require('./routes/productos.routes');
 const usuariosRoutes = require('./routes/usuarios.routes');
 
 const app = express();
@@ -11,6 +11,7 @@ app.use(express.json());
 
 // Rutas
 app.use('/api/usuarios', usuariosRoutes);
+app.use('/api/productos', productosRoutes);
 
 // Ruta principal
 app.get('/', (req, res) => {

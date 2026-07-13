@@ -102,8 +102,39 @@ const obtenerProductos = async (req, res) => {
     }
 
 };
+// Buscar producto por código
+const buscarProductoPorCodigo = async (req, res) => {
 
+    try {
+
+        const { codigo } = req.params;
+
+        const [producto] = await pool.query(
+            'SELECT * FROM productos WHERE codigo_producto = ?',
+            [codigo]
+        );
+
+        if (producto.length === 0) {
+            return res.status(404).json({
+                mensaje: 'Producto no encontrado'
+            });
+        }
+
+        res.json(producto[0]);
+
+    } catch (error) {
+
+        console.log(error);
+
+        res.status(500).json({
+            mensaje: 'Error del servidor'
+        });
+
+    }
+
+};
 module.exports = {
     registrarProducto,
-    obtenerProductos
+    obtenerProductos,
+    buscarProductoPorCodigo
 };

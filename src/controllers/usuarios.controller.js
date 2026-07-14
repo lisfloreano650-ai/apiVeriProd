@@ -14,9 +14,11 @@ const registrarUsuario = async (req, res) => {
             nombre,
             apellido,
             correo,
-            password,
-            rol
+            password
         } = req.body;
+
+        // Rol por defecto
+        const rol = 'Usuario';
 
         const [existe] = await pool.query(
             'SELECT * FROM usuarios WHERE correo = ?',
@@ -99,27 +101,21 @@ const loginUsuario = async (req, res) => {
         }
 
         const token = jwt.sign(
-
             {
                 id: usuario.id_usuario,
                 correo: usuario.correo,
                 rol: usuario.rol
             },
-
             'veriprod2026',
-
             {
                 expiresIn: '8h'
             }
-
         );
 
         res.json({
-
             mensaje: 'Login correcto',
             token,
             usuario
-
         });
 
     } catch (error) {
@@ -137,8 +133,6 @@ const loginUsuario = async (req, res) => {
 // ==============================
 
 module.exports = {
-
     registrarUsuario,
     loginUsuario
-
 };

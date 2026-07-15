@@ -1,6 +1,9 @@
 const pool = require('../config/db');
 
+// ==============================
 // Registrar producto
+// ==============================
+
 const registrarProducto = async (req, res) => {
 
     try {
@@ -80,7 +83,10 @@ const registrarProducto = async (req, res) => {
 
 };
 
+// ==============================
 // Listar productos
+// ==============================
+
 const obtenerProductos = async (req, res) => {
 
     try {
@@ -102,7 +108,11 @@ const obtenerProductos = async (req, res) => {
     }
 
 };
+
+// ==============================
 // Buscar producto por código
+// ==============================
+
 const buscarProductoPorCodigo = async (req, res) => {
 
     try {
@@ -115,9 +125,11 @@ const buscarProductoPorCodigo = async (req, res) => {
         );
 
         if (producto.length === 0) {
+
             return res.status(404).json({
                 mensaje: 'Producto no encontrado'
             });
+
         }
 
         res.json(producto[0]);
@@ -133,8 +145,84 @@ const buscarProductoPorCodigo = async (req, res) => {
     }
 
 };
+
+// ==============================
+// Actualizar producto
+// ==============================
+
+const actualizarProducto = async (req, res) => {
+
+    try {
+
+        const { id } = req.params;
+
+        const {
+            codigo_producto,
+            nombre_producto,
+            marca,
+            categoria,
+            descripcion,
+            fecha_fabricacion,
+            fecha_caducidad,
+            numero_lote,
+            pais_origen,
+            estado
+        } = req.body;
+
+        await pool.query(
+
+            `UPDATE productos SET
+
+                codigo_producto=?,
+                nombre_producto=?,
+                marca=?,
+                categoria=?,
+                descripcion=?,
+                fecha_fabricacion=?,
+                fecha_caducidad=?,
+                numero_lote=?,
+                pais_origen=?,
+                estado=?
+
+            WHERE id_producto=?`,
+
+            [
+                codigo_producto,
+                nombre_producto,
+                marca,
+                categoria,
+                descripcion,
+                fecha_fabricacion,
+                fecha_caducidad,
+                numero_lote,
+                pais_origen,
+                estado,
+                id
+            ]
+
+        );
+
+        res.json({
+            mensaje: 'Producto actualizado correctamente'
+        });
+
+    } catch (error) {
+
+        console.log(error);
+
+        res.status(500).json({
+            mensaje: 'Error del servidor'
+        });
+
+    }
+
+};
+
+// ==============================
+
 module.exports = {
     registrarProducto,
     obtenerProductos,
-    buscarProductoPorCodigo
+    buscarProductoPorCodigo,
+    actualizarProducto
 };

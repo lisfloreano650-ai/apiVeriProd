@@ -29,12 +29,15 @@ const registrarProducto = async (req, res) => {
         );
 
         if (existe.length > 0) {
+
             return res.status(400).json({
                 mensaje: 'El código del producto ya existe'
             });
+
         }
 
         await pool.query(
+
             `INSERT INTO productos
             (
                 codigo_producto,
@@ -51,6 +54,7 @@ const registrarProducto = async (req, res) => {
                 id_proveedor
             )
             VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`,
+
             [
                 codigo_producto,
                 nombre_producto,
@@ -65,6 +69,7 @@ const registrarProducto = async (req, res) => {
                 imagen,
                 id_proveedor
             ]
+
         );
 
         res.status(201).json({
@@ -219,10 +224,42 @@ const actualizarProducto = async (req, res) => {
 };
 
 // ==============================
+// Eliminar producto
+// ==============================
+
+const eliminarProducto = async (req, res) => {
+
+    try {
+
+        const { id } = req.params;
+
+        await pool.query(
+            'DELETE FROM productos WHERE id_producto = ?',
+            [id]
+        );
+
+        res.json({
+            mensaje: 'Producto eliminado correctamente'
+        });
+
+    } catch (error) {
+
+        console.log(error);
+
+        res.status(500).json({
+            mensaje: 'Error del servidor'
+        });
+
+    }
+
+};
+
+// ==============================
 
 module.exports = {
     registrarProducto,
     obtenerProductos,
     buscarProductoPorCodigo,
-    actualizarProducto
+    actualizarProducto,
+    eliminarProducto
 };

@@ -5,7 +5,8 @@ const {
     registrarProducto,
     obtenerProductos,
     buscarProductoPorCodigo,
-    actualizarProducto
+    actualizarProducto,
+    eliminarProducto
 } = require('../controllers/productos.controller');
 
 // Registrar producto
@@ -19,5 +20,8 @@ router.get('/qr/:codigo', buscarProductoPorCodigo);
 
 // Actualizar producto
 router.put('/:id', actualizarProducto);
+
+// Eliminar producto
+router.delete('/:id', eliminarProducto);
 
 module.exports = router;

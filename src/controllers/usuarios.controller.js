@@ -210,12 +210,63 @@ const eliminarUsuario = async (req, res) => {
 };
 
 // ==============================
+// ACTUALIZAR USUARIO
+// ==============================
+
+const actualizarUsuario = async (req, res) => {
+
+    try {
+
+        const { id } = req.params;
+
+        const {
+            nombre,
+            apellido,
+            correo,
+            rol
+        } = req.body;
+
+        await pool.query(
+
+            `UPDATE usuarios SET
+                nombre=?,
+                apellido=?,
+                correo=?,
+                rol=?
+            WHERE id_usuario=?`,
+
+            [
+                nombre,
+                apellido,
+                correo,
+                rol,
+                id
+            ]
+
+        );
+
+        res.json({
+            mensaje: 'Usuario actualizado correctamente'
+        });
+
+    } catch (error) {
+
+        console.log(error);
+
+        res.status(500).json({
+            mensaje: 'Error del servidor'
+        });
+
+    }
+
+};
 
 module.exports = {
 
     registrarUsuario,
     loginUsuario,
     obtenerUsuarios,
-    eliminarUsuario
+    eliminarUsuario,
+    actualizarUsuario
 
 };

@@ -5,17 +5,21 @@ const {
     registrarUsuario,
     loginUsuario,
     obtenerUsuarios,
-    eliminarUsuario
+    eliminarUsuario,
+    actualizarUsuario
 } = require('../controllers/usuarios.controller');
 
-// Registrar usuario
+// Registrar
 router.post('/registro', registrarUsuario);
 
 // Login
 router.post('/login', loginUsuario);
 
-// Obtener usuarios
+// Listar usuarios
 router.get('/', obtenerUsuarios);
+
+// Actualizar usuario
+router.put('/:id', actualizarUsuario);
 
 // Eliminar usuario
 router.delete('/:id', eliminarUsuario);

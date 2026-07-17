@@ -179,11 +179,43 @@ const obtenerUsuarios = async (req, res) => {
 };
 
 // ==============================
+// ELIMINAR USUARIO
+// ==============================
+
+const eliminarUsuario = async (req, res) => {
+
+    try {
+
+        const { id } = req.params;
+
+        await pool.query(
+            'DELETE FROM usuarios WHERE id_usuario = ?',
+            [id]
+        );
+
+        res.json({
+            mensaje: 'Usuario eliminado correctamente'
+        });
+
+    } catch (error) {
+
+        console.log(error);
+
+        res.status(500).json({
+            mensaje: 'Error del servidor'
+        });
+
+    }
+
+};
+
+// ==============================
 
 module.exports = {
 
     registrarUsuario,
     loginUsuario,
-    obtenerUsuarios
+    obtenerUsuarios,
+    eliminarUsuario
 
 };

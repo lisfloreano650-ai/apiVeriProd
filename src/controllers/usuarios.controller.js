@@ -17,7 +17,6 @@ const registrarUsuario = async (req, res) => {
             password
         } = req.body;
 
-        // Rol por defecto
         const rol = 'Usuario';
 
         const [existe] = await pool.query(
@@ -26,17 +25,21 @@ const registrarUsuario = async (req, res) => {
         );
 
         if (existe.length > 0) {
+
             return res.status(400).json({
                 mensaje: 'El correo ya está registrado'
             });
+
         }
 
         const passwordHash = await bcrypt.hash(password, 10);
 
         await pool.query(
+
             `INSERT INTO usuarios
             (nombre, apellido, correo, password, rol)
             VALUES (?,?,?,?,?)`,
+
             [
                 nombre,
                 apellido,
@@ -44,6 +47,7 @@ const registrarUsuario = async (req, res) => {
                 passwordHash,
                 rol
             ]
+
         );
 
         res.status(201).json({
@@ -73,8 +77,11 @@ const loginUsuario = async (req, res) => {
         const { correo, password } = req.body;
 
         const [usuarios] = await pool.query(
+
             'SELECT * FROM usuarios WHERE correo = ?',
+
             [correo]
+
         );
 
         if (usuarios.length === 0) {
@@ -101,22 +108,63 @@ const loginUsuario = async (req, res) => {
         }
 
         const token = jwt.sign(
+
             {
                 id: usuario.id_usuario,
                 correo: usuario.correo,
                 rol: usuario.rol
             },
+
             'veriprod2026',
+
             {
                 expiresIn: '8h'
             }
+
         );
 
         res.json({
+
             mensaje: 'Login correcto',
             token,
             usuario
+
         });
+
+    } catch (error) {
+
+        console.log(error);
+
+        res.status(500).json({
+            mensaje: 'Error del servidor'
+        });
+
+    }
+
+};
+
+// ==============================
+// OBTENER USUARIOS
+// ==============================
+
+const obtenerUsuarios = async (req, res) => {
+
+    try {
+
+        const [usuarios] = await pool.query(
+
+            `SELECT
+                id_usuario,
+                nombre,
+                apellido,
+                correo,
+                rol
+            FROM usuarios
+            ORDER BY nombre`
+
+        );
+
+        res.json(usuarios);
 
     } catch (error) {
 
@@ -133,6 +181,9 @@ const loginUsuario = async (req, res) => {
 // ==============================
 
 module.exports = {
+
     registrarUsuario,
-    loginUsuario
+    loginUsuario,
+    obtenerUsuarios
+
 };

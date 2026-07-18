@@ -90,7 +90,48 @@ const obtenerReportes = async (req, res) => {
 
 };
 
+// ==============================
+// ACTUALIZAR ESTADO DEL REPORTE
+// ==============================
+
+const actualizarEstadoReporte = async (req, res) => {
+
+    try {
+
+        const { id } = req.params;
+        const { estado } = req.body;
+
+        await pool.query(
+
+            `UPDATE reportes
+             SET estado=?
+             WHERE id_reporte=?`,
+
+            [
+                estado,
+                id
+            ]
+
+        );
+
+        res.json({
+            mensaje: 'Estado actualizado correctamente'
+        });
+
+    } catch (error) {
+
+        console.log(error);
+
+        res.status(500).json({
+            mensaje: 'Error del servidor'
+        });
+
+    }
+
+};
+
 module.exports = {
     registrarReporte,
-    obtenerReportes
+    obtenerReportes,
+    actualizarEstadoReporte
 };

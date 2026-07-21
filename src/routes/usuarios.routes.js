@@ -21,6 +21,9 @@ router.post('/registro', registrarUsuario);
 // Login
 router.post('/login', loginUsuario);
 
+// Recuperar contraseña
+router.put('/recuperar-password', recuperarPassword);
+
 // Listar usuarios
 router.get('/', obtenerUsuarios);
 

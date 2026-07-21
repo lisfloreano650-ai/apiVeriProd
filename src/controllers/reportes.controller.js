@@ -44,10 +44,13 @@ const registrarReporte = async (req, res) => {
 
     } catch (error) {
 
+        console.log("================================");
         console.log(error);
+        console.log("================================");
 
         res.status(500).json({
-            mensaje: 'Error del servidor'
+            mensaje: error.message,
+            error: error
         });
 
     }

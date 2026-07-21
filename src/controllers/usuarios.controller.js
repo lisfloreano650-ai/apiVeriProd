@@ -261,12 +261,103 @@ const actualizarUsuario = async (req, res) => {
 
 };
 
+// ==============================
+// RECUPERAR CONTRASEÑA
+// ==============================
+
+const recuperarPassword = async (req, res) => {
+
+    try {
+
+        const {
+            correo,
+            nuevaPassword
+        } = req.body;
+
+
+        const [usuarios] = await pool.query(
+
+            'SELECT * FROM usuarios WHERE correo=?',
+
+            [correo]
+
+        );
+
+
+        if (usuarios.length === 0) {
+
+            return res.status(404).json({
+
+                mensaje: 'El correo no existe'
+
+            });
+
+        }
+
+
+        const passwordHash = await bcrypt.hash(
+
+            nuevaPassword,
+
+            10
+
+        );
+
+
+        await pool.query(
+
+            `UPDATE usuarios
+             SET password=?
+             WHERE correo=?`,
+
+            [
+
+                passwordHash,
+                correo
+
+            ]
+
+        );
+
+
+        res.json({
+
+            mensaje:'Contraseña actualizada correctamente'
+
+        });
+
+
+
+    } catch(error) {
+
+
+        console.log(error);
+
+
+        res.status(500).json({
+
+            mensaje:'Error del servidor'
+
+        });
+
+
+    }
+
+};
+
+
+
+// ==============================
+// EXPORTAR
+// ==============================
+
 module.exports = {
 
     registrarUsuario,
     loginUsuario,
     obtenerUsuarios,
     eliminarUsuario,
-    actualizarUsuario
+    actualizarUsuario,
+    recuperarPassword
 
 };

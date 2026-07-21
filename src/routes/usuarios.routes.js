@@ -1,13 +1,19 @@
 const express = require('express');
+
 const router = express.Router();
 
+
 const {
+
     registrarUsuario,
     loginUsuario,
     obtenerUsuarios,
     eliminarUsuario,
-    actualizarUsuario
+    actualizarUsuario,
+    recuperarPassword
+
 } = require('../controllers/usuarios.controller');
+
 
 // Registrar
 router.post('/registro', registrarUsuario);
